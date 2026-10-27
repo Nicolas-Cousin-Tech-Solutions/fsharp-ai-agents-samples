@@ -1,4 +1,4 @@
-// agent.fsx — modules 07 et 08 : la boucle d'agent, bornée, dont chaque tour est une union discriminée.
+// agent.fsx — modules 07 et 08 : boucle d'agent bornée ; chaque tour est une union discriminée.
 // Ce fichier définit l'agent sans le lancer : demander.fsx et scenarios.fsx l'utilisent.
 #load "llm.fsx" "commandes.fsx" "decodage.fsx"
 
@@ -34,7 +34,8 @@ let decrireErreur (erreur: AgentError) : string =
 let maxTours = 4
 
 let instructions =
-    "Tu es l'assistant support d'une boutique en ligne. Utilise les outils pour répondre. Réponds en français, brièvement."
+    "Tu es l'assistant support d'une boutique en ligne. "
+    + "Utilise les outils pour répondre. Réponds en français, brièvement."
 
 let outilCommande =
     AIFunctionFactory.Create(
@@ -71,7 +72,11 @@ let executer (demande: Result<ToolCall, ToolError>) : string =
     | Error erreur -> sprintf "Erreur : %A" erreur
 
 // Module 08 — les pannes de transport deviennent des cas nommés.
-let appelerModele (client: IChatClient) (historique: ResizeArray<ChatMessage>) (options: ChatOptions) =
+let appelerModele
+    (client: IChatClient)
+    (historique: ResizeArray<ChatMessage>)
+    (options: ChatOptions)
+    =
     try
         Ok(client.GetResponseAsync(historique, options).GetAwaiter().GetResult())
     with

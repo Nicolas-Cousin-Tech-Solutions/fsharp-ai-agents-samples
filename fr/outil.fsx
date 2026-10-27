@@ -7,7 +7,7 @@ open Microsoft.Extensions.AI
 open Llm
 open Commandes
 
-// 1. Décrire l'outil au modèle : nom, description, et schéma des paramètres (déduit de getOrder).
+// 1. Décrire l'outil au modèle : nom, description, schéma (déduit de getOrder).
 let outilCommande =
     AIFunctionFactory.Create(
         Func<int, string>(getOrder),
@@ -20,9 +20,13 @@ printfn "[schéma envoyé au modèle] %s" (outilCommande.JsonSchema.GetRawText()
 let options = creerOptions ()
 options.Tools <- ResizeArray<AITool> [ outilCommande :> AITool ]
 
+let instructions =
+    "Tu es l'assistant support d'une boutique en ligne. "
+    + "Utilise les outils pour répondre. Réponds en français, brièvement."
+
 let historique =
     ResizeArray<ChatMessage>
-        [ ChatMessage(ChatRole.System, "Tu es l'assistant support d'une boutique en ligne. Utilise les outils pour répondre. Réponds en français, brièvement.")
+        [ ChatMessage(ChatRole.System, instructions)
           ChatMessage(ChatRole.User, "Où en est ma commande 4512 ?") ]
 
 // 2. Premier tour : le modèle répond… par une demande d'outil, ou par du texte.
@@ -46,8 +50,9 @@ else
     historique.AddRange(reponse1.Messages)
 
     for demande in demandes do
-        printfn "[le modèle demande] %s %s" demande.Name (JsonSerializer.Serialize demande.Arguments)
-        // Lecture naïve de l'argument : le module 06 remplacera ce cast par une vraie frontière.
+        let argsJson = JsonSerializer.Serialize demande.Arguments
+        printfn "[le modèle demande] %s %s" demande.Name argsJson
+        // Lecture naïve : le module 06 remplacera ce cast par une vraie frontière.
         let numero = (demande.Arguments["orderId"] :?> JsonElement).GetInt32()
         let resultat = getOrder numero
         printfn "[votre code exécute] getOrder %d -> %s" numero resultat

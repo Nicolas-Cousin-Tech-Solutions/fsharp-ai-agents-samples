@@ -8,7 +8,7 @@ open System.Net.Http
 open Microsoft.Extensions.AI
 open OllamaSharp
 
-// Adresse du serveur Ollama : localhost par défaut, ou la variable d'environnement OLLAMA_URL.
+// Adresse d'Ollama : localhost par défaut, ou la variable d'environnement OLLAMA_URL.
 let adresse =
     match Environment.GetEnvironmentVariable "OLLAMA_URL" with
     | null
@@ -17,7 +17,8 @@ let adresse =
 
 let modele = "qwen3.5:4b"
 
-// Construit un IChatClient. Le délai est explicite : sur CPU, une réponse peut prendre des dizaines de secondes.
+// Construit un IChatClient. Le délai est explicite : sur CPU, une réponse
+// peut prendre des dizaines de secondes.
 let creerClient (adresseServeur: string) (delai: TimeSpan) : IChatClient =
     let http = new HttpClient(BaseAddress = Uri adresseServeur, Timeout = delai)
     new OllamaApiClient(http, modele)

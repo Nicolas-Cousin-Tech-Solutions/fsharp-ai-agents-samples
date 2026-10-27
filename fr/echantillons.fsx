@@ -1,4 +1,4 @@
-// echantillons.fsx — module 06 : des demandes d'outil brutes, telles qu'un modèle pourrait les envoyer.
+// echantillons.fsx — module 06 : demandes d'outil brutes, comme en enverrait un modèle.
 #load "decodage.fsx"
 
 open Decodage

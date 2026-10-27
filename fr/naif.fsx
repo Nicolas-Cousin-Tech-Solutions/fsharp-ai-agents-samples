@@ -1,11 +1,12 @@
-// naif.fsx — module 06 : ce qui se passe quand on désérialise directement les arguments du modèle.
+// naif.fsx — module 06 : désérialiser directement les arguments du modèle.
 open System.Text.Json
 
 type ArgumentsCommande = { orderId: int }
 
 let essayer (argsJson: string) =
     try
-        printfn "%-20s -> %A" argsJson (JsonSerializer.Deserialize<ArgumentsCommande> argsJson)
+        let valeur = JsonSerializer.Deserialize<ArgumentsCommande> argsJson
+        printfn "%-20s -> %A" argsJson valeur
     with ex ->
         printfn "%-20s -> exception %s" argsJson (ex.GetType().Name)
 

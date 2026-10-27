@@ -1,5 +1,5 @@
 // mcp-server.fsx — module 09: expose getOrder to any MCP client.
-// Tested on 2026-10-27 with ModelContextProtocol 2.3.0 and Microsoft.Extensions.Hosting 10.0.14.
+// Tested on 2026-10-27: ModelContextProtocol 2.3.0, Microsoft.Extensions.Hosting 10.0.14.
 #r "nuget: ModelContextProtocol, 2.3.0"
 #r "nuget: Microsoft.Extensions.Hosting, 10.0.14"
 #load "orders.fsx"
@@ -24,7 +24,8 @@ let orderTool =
 let builder = Host.CreateApplicationBuilder()
 
 // stdout is reserved for the protocol: all logs go to stderr.
-builder.Logging.AddConsole(fun options -> options.LogToStandardErrorThreshold <- LogLevel.Trace)
+builder.Logging.AddConsole(fun options ->
+    options.LogToStandardErrorThreshold <- LogLevel.Trace)
 |> ignore
 
 builder.Services.AddMcpServer().WithStdioServerTransport().WithTools([ orderTool ])

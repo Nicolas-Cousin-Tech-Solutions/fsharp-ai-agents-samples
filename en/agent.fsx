@@ -1,4 +1,4 @@
-// agent.fsx — modules 07 and 08: the agent loop, bounded, where each turn is a discriminated union.
+// agent.fsx — modules 07 and 08: bounded agent loop; each turn is a discriminated union.
 // This file defines the agent without running it: ask.fsx and scenarios.fsx use it.
 #load "llm.fsx" "orders.fsx" "decoding.fsx"
 
@@ -34,7 +34,8 @@ let describeError (error: AgentError) : string =
 let maxTurns = 4
 
 let instructions =
-    "You are the support assistant of an online shop. Use the tools to answer. Answer in English, briefly."
+    "You are the support assistant of an online shop. "
+    + "Use the tools to answer. Answer in English, briefly."
 
 let orderTool =
     AIFunctionFactory.Create(
@@ -71,7 +72,11 @@ let execute (request: Result<ToolCall, ToolError>) : string =
     | Error error -> sprintf "Error: %A" error
 
 // Module 08 — transport failures become named cases.
-let callModel (client: IChatClient) (history: ResizeArray<ChatMessage>) (options: ChatOptions) =
+let callModel
+    (client: IChatClient)
+    (history: ResizeArray<ChatMessage>)
+    (options: ChatOptions)
+    =
     try
         Ok(client.GetResponseAsync(history, options).GetAwaiter().GetResult())
     with

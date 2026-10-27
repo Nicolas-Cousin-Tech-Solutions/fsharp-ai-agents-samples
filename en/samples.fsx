@@ -1,4 +1,4 @@
-// samples.fsx — module 06: raw tool requests, as a model might send them.
+// samples.fsx — module 06: raw tool requests, as a model would send them.
 #load "decoding.fsx"
 
 open Decoding

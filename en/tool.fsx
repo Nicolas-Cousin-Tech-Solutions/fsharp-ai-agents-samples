@@ -7,7 +7,7 @@ open Microsoft.Extensions.AI
 open Llm
 open Orders
 
-// 1. Describe the tool to the model: name, description, and parameter schema (inferred from getOrder).
+// 1. Describe the tool to the model: name, description, schema (inferred from getOrder).
 let orderTool =
     AIFunctionFactory.Create(
         Func<int, string>(getOrder),
@@ -20,9 +20,13 @@ printfn "[schema sent to the model] %s" (orderTool.JsonSchema.GetRawText())
 let options = createOptions ()
 options.Tools <- ResizeArray<AITool> [ orderTool :> AITool ]
 
+let instructions =
+    "You are the support assistant of an online shop. "
+    + "Use the tools to answer. Answer in English, briefly."
+
 let history =
     ResizeArray<ChatMessage>
-        [ ChatMessage(ChatRole.System, "You are the support assistant of an online shop. Use the tools to answer. Answer in English, briefly.")
+        [ ChatMessage(ChatRole.System, instructions)
           ChatMessage(ChatRole.User, "Where is my order 4512?") ]
 
 // 2. First turn: the model answers… with a tool request, or with text.
@@ -46,8 +50,9 @@ else
     history.AddRange(response1.Messages)
 
     for request in requests do
-        printfn "[the model requests] %s %s" request.Name (JsonSerializer.Serialize request.Arguments)
-        // Naive reading of the argument: module 06 will replace this cast with a real boundary.
+        let argsJson = JsonSerializer.Serialize request.Arguments
+        printfn "[the model requests] %s %s" request.Name argsJson
+        // Naive reading: module 06 will replace this cast with a real boundary.
         let number = (request.Arguments["orderId"] :?> JsonElement).GetInt32()
         let result = getOrder number
         printfn "[your code runs] getOrder %d -> %s" number result

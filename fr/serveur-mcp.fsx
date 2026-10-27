@@ -1,5 +1,5 @@
 // serveur-mcp.fsx — module 09 : exposer getOrder à n'importe quel client MCP.
-// Testé le 2026-10-27 avec ModelContextProtocol 2.3.0 et Microsoft.Extensions.Hosting 10.0.14.
+// Testé le 2026-10-27 : ModelContextProtocol 2.3.0, Microsoft.Extensions.Hosting 10.0.14.
 #r "nuget: ModelContextProtocol, 2.3.0"
 #r "nuget: Microsoft.Extensions.Hosting, 10.0.14"
 #load "commandes.fsx"
@@ -24,7 +24,8 @@ let outilCommande =
 let builder = Host.CreateApplicationBuilder()
 
 // stdout est réservé au protocole : tous les journaux partent sur stderr.
-builder.Logging.AddConsole(fun options -> options.LogToStandardErrorThreshold <- LogLevel.Trace)
+builder.Logging.AddConsole(fun options ->
+    options.LogToStandardErrorThreshold <- LogLevel.Trace)
 |> ignore
 
 builder.Services.AddMcpServer().WithStdioServerTransport().WithTools([ outilCommande ])

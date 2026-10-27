@@ -9,10 +9,14 @@ open ModelContextProtocol.Protocol
 
 let cheminServeur = IO.Path.Combine(__SOURCE_DIRECTORY__, "serveur-mcp.fsx")
 
-let transport =
-    StdioClientTransport(
-        StdioClientTransportOptions(Name = "commandes", Command = "dotnet", Arguments = [| "fsi"; cheminServeur |])
+let optionsTransport =
+    StdioClientTransportOptions(
+        Name = "commandes",
+        Command = "dotnet",
+        Arguments = [| "fsi"; cheminServeur |]
     )
+
+let transport = StdioClientTransport(optionsTransport)
 
 let client = McpClient.CreateAsync(transport).GetAwaiter().GetResult()
 
@@ -22,7 +26,8 @@ for outil in client.ListToolsAsync().AsTask().GetAwaiter().GetResult() do
 
 let appeler (argument: obj) =
     let arguments = Dictionary<string, obj>(dict [ ("orderId", argument) ])
-    let resultat = client.CallToolAsync("getOrder", arguments).AsTask().GetAwaiter().GetResult()
+    let appel = client.CallToolAsync("getOrder", arguments)
+    let resultat = appel.AsTask().GetAwaiter().GetResult()
 
     let texte =
         resultat.Content
@@ -32,7 +37,8 @@ let appeler (argument: obj) =
             | _ -> None)
         |> String.concat ""
 
-    printfn "getOrder(%A) -> IsError=%b : %s" argument (resultat.IsError = Nullable true) texte
+    let enErreur = (resultat.IsError = Nullable true)
+    printfn "getOrder(%A) -> IsError=%b : %s" argument enErreur texte
 
 appeler (box 4512)
 appeler (box 9999)

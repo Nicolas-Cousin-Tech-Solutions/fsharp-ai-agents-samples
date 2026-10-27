@@ -21,7 +21,7 @@ let fakeClient (responses: ChatResponse list) : IChatClient =
         member _.GetService(_, _) = null
         member _.Dispose() = () }
 
-// A "model" response that requests a tool (arguments as JsonElement, as with Ollama).
+// "Model" response that requests a tool (arguments as JsonElement, as with Ollama).
 let toolRequest (name: string) (argsJson: string) : ChatResponse =
     let args = JsonSerializer.Deserialize<Dictionary<string, obj>>(argsJson)
     let request = FunctionCallContent("call-1", name, args) :> AIContent

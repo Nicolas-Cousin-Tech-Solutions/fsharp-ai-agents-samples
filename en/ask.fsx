@@ -1,4 +1,4 @@
-// ask.fsx — module 07: ask the agent real questions, with the local model.
+// ask.fsx — module 07: ask the agent real questions (local model).
 #load "agent.fsx"
 
 open Agent
