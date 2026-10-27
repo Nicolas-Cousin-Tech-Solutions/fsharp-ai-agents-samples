@@ -32,3 +32,27 @@ let creerOptions () : ChatOptions =
         Reasoning = ReasoningOptions(Effort = ReasoningEffort.None),
         Temperature = Nullable 0.0f
     )
+
+// Vérifie qu'Ollama répond et que le modèle est téléchargé. Sinon, dit quoi
+// faire et arrête le script, au lieu d'afficher une pile d'exception.
+let verifierOllama () =
+    let probleme =
+        try
+            let http = new HttpClient(BaseAddress = Uri adresse, Timeout = TimeSpan.FromSeconds 10.0)
+            use ollama = new OllamaApiClient(http)
+            let modeles = ollama.ListLocalModelsAsync().GetAwaiter().GetResult()
+
+            if modeles |> Seq.exists (fun m -> m.Name = modele) then
+                None
+            else
+                Some $"le modèle {modele} n'est pas téléchargé. Lancez : ollama pull {modele}"
+        with
+        | :? HttpRequestException
+        | :? Threading.Tasks.TaskCanceledException ->
+            Some $"Ollama ne répond pas sur {adresse}. Démarrez-le (application Ollama ou « ollama serve »)."
+
+    match probleme with
+    | None -> ()
+    | Some message ->
+        eprintfn "Impossible de continuer : %s" message
+        exit 1

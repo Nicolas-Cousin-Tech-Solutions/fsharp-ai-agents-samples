@@ -7,6 +7,8 @@ open Microsoft.Extensions.AI
 open Llm
 open Commandes
 
+verifierOllama ()
+
 // 1. Décrire l'outil au modèle : nom, description, schéma (déduit de getOrder).
 let outilCommande =
     AIFunctionFactory.Create(

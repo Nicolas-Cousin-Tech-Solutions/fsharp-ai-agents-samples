@@ -7,6 +7,8 @@ open Microsoft.Extensions.AI
 open Llm
 open Orders
 
+checkOllama ()
+
 // 1. Describe the tool to the model: name, description, schema (inferred from getOrder).
 let orderTool =
     AIFunctionFactory.Create(

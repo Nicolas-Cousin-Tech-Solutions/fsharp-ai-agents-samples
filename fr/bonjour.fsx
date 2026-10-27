@@ -5,6 +5,8 @@ open System.Diagnostics
 open Microsoft.Extensions.AI
 open Llm
 
+verifierOllama ()
+
 let question = "En une phrase, qu'est-ce qu'un agent IA ?"
 
 let chrono = Stopwatch.StartNew()

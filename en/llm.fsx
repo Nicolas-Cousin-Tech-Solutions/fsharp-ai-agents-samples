@@ -32,3 +32,27 @@ let createOptions () : ChatOptions =
         Reasoning = ReasoningOptions(Effort = ReasoningEffort.None),
         Temperature = Nullable 0.0f
     )
+
+// Checks that Ollama answers and that the model is downloaded. Otherwise, says
+// what to do and stops the script, instead of printing a stack trace.
+let checkOllama () =
+    let problem =
+        try
+            let http = new HttpClient(BaseAddress = Uri address, Timeout = TimeSpan.FromSeconds 10.0)
+            use ollama = new OllamaApiClient(http)
+            let models = ollama.ListLocalModelsAsync().GetAwaiter().GetResult()
+
+            if models |> Seq.exists (fun m -> m.Name = model) then
+                None
+            else
+                Some $"the model {model} is not downloaded. Run: ollama pull {model}"
+        with
+        | :? HttpRequestException
+        | :? Threading.Tasks.TaskCanceledException ->
+            Some $"Ollama does not answer on {address}. Start it (Ollama app or \"ollama serve\")."
+
+    match problem with
+    | None -> ()
+    | Some message ->
+        eprintfn "Cannot continue: %s" message
+        exit 1

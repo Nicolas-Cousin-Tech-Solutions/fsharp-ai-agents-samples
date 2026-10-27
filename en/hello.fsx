@@ -5,6 +5,8 @@ open System.Diagnostics
 open Microsoft.Extensions.AI
 open Llm
 
+checkOllama ()
+
 let question = "In one sentence, what is an AI agent?"
 
 let stopwatch = Stopwatch.StartNew()

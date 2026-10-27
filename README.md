@@ -31,6 +31,8 @@ The scripts target `http://localhost:11434`. To use another Ollama server, set `
 OLLAMA_URL=http://my-server:11434 dotnet fsi en/hello.fsx
 ```
 
+`hello.fsx` and `tool.fsx` first check that Ollama answers and that the model is downloaded, and stop with a one-line hint if not. The agent scripts (`ask.fsx`, `scenarios.fsx`) don't need this check: an unreachable server is one of the failures they handle as a value.
+
 ## The scripts
 
 Run them in order with `dotnet fsi en/<script>.fsx` (or `fr/…`).
@@ -54,7 +56,7 @@ Shared files, loaded by the scripts above (they print nothing on their own):
 
 | `en/` | `fr/` | Role |
 |---|---|---|
-| `llm.fsx` | `llm.fsx` | The only file that knows the provider and the model. Thinking mode is turned off (`ReasoningEffort.None`), which is about 10× faster on CPU. |
+| `llm.fsx` | `llm.fsx` | The only file that knows the provider and the model. Thinking mode is turned off (`ReasoningEffort.None`), which is about 10× faster on CPU. Also holds the Ollama pre-check (`checkOllama` / `verifierOllama`). |
 | `orders.fsx` | `commandes.fsx` | The order domain, pure F#, no package. |
 | `decoding.fsx` | `decodage.fsx` | The boundary between model data and your code. |
 | `agent.fsx` | `agent.fsx` | The agent loop. |
